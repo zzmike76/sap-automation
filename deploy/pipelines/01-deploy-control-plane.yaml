@@ -87,13 +87,16 @@ stages:
           - task:                                 AzureCLI@2
             continueOnError:                      false
             inputs:
-              azureSubscription:                  ${{parameters.connection_name}}
-              scriptType:                         bash
-              scriptLocation:                     'scriptPath'
-              scriptPath:                         $(System.DefaultWorkingDirectory)/sap-automation/deploy/scripts/pipeline_scripts/01-control-plane-prepare.sh
-              addSpnToEnvironment:                true
-              visibleAzLogin:                     false
-              failOnStandardError:                false
+              azureSubscription: ${{parameters.connection_name}}
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                script_path="$(cygpath -u '$(System.DefaultWorkingDirectory)')/sap-automation/deploy/scripts/pipeline_scripts/01-control-plane-prepare.sh"
+                chmod +x "$script_path"
+                "$script_path"
+              addSpnToEnvironment: true
+              visibleAzLogin: false
+              failOnStandardError: false
 
             displayName:                          Prepare control plane
             env:
@@ -154,10 +157,13 @@ stages:
               getLatestFromBranch:                true
           - task:                                 Bash@3
             inputs:
-              targetType:                         'filePath'
-              filePath:                           "$(System.DefaultWorkingDirectory)/sap-automation/deploy/scripts/pipeline_scripts/00-store-secrets-in-keyvault.sh"
-              failOnStderr:                       false
-              workingDirectory:                   "$(System.DefaultWorkingDirectory)"
+              targetType: inline
+              script: |
+                script_path="$(cygpath -u '$(System.DefaultWorkingDirectory)')/sap-automation/deploy/scripts/pipeline_scripts/00-store-secrets-in-keyvault.sh"
+                chmod +x "$script_path"
+                "$script_path"
+              workingDirectory: "$(System.DefaultWorkingDirectory)"
+              failOnStderr: false
             name:                                 StoreSecrets
             displayName:                          Store deployment credentials in Key Vault
             env:
@@ -209,10 +215,13 @@ stages:
               terraformVersion:                   $(tf_version)
           - task:                                 Bash@3
             inputs:
-              targetType:                         'filePath'
-              filePath:                           "$(System.DefaultWorkingDirectory)/sap-automation/deploy/scripts/pipeline_scripts/01-control-plane-deploy.sh"
-              failOnStderr:                       false
-              workingDirectory:                   "$(System.DefaultWorkingDirectory)"
+              targetType: inline
+              script: |
+                script_path="$(cygpath -u '$(System.DefaultWorkingDirectory)')/sap-automation/deploy/scripts/pipeline_scripts/01-control-plane-deploy.sh"
+                chmod +x "$script_path"
+                "$script_path"
+              workingDirectory: "$(System.DefaultWorkingDirectory)"
+              failOnStderr: false
             displayName:                          Deploy control plane Part 2
             env:
               APP_REGISTRATION_APP_ID:            $(APP_REGISTRATION_APP_ID)
@@ -350,13 +359,16 @@ stages:
           - task:                                 AzureCLI@2
             continueOnError:                      false
             inputs:
-              azureSubscription:                  ${{parameters.connection_name}}
-              scriptType:                         bash
-              scriptLocation:                     'scriptPath'
-              scriptPath:                         $(System.DefaultWorkingDirectory)/sap-automation/deploy/scripts/pipeline_scripts/01-webapp-configuration.sh
-              addSpnToEnvironment:                true
-              visibleAzLogin:                     false
-              failOnStandardError:                false
+              azureSubscription: ${{parameters.connection_name}}
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                script_path="$(cygpath -u '$(System.DefaultWorkingDirectory)')/sap-automation/deploy/scripts/pipeline_scripts/01-webapp-configuration.sh"
+                chmod +x "$script_path"
+                "$script_path"
+              addSpnToEnvironment: true
+              visibleAzLogin: false
+              failOnStandardError: false
             displayName:                          "Documentation"
             env:
               APP_REGISTRATION_APP_ID:            $(APP_REGISTRATION_APP_ID)
